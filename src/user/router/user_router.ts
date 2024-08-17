@@ -23,4 +23,13 @@ router
 .post(middleware,userController.signUp)
 
 
+
+middleware = [
+    userValidation.loginValidation(),
+    commonMiddleware.checkForErrors
+]
+router
+.route('/log-in')
+.post(middleware,userController.loginUser)
+
 export const user_route = router;

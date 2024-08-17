@@ -1,5 +1,6 @@
 import mongoose, { Schema, Model } from "mongoose";
 import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
 
 interface IUser {
     f_name: string;
@@ -53,6 +54,22 @@ export class UserModel {
 
         schema.methods.isPasswordCorrect = async function (password: string){
             return await bcrypt.compare(password, this.password);
+        }
+
+        schema.methods.isPasswordCorrect = async function (password: string){
+            return await bcrypt.compare(password, this.password);
+        }
+        
+        schema.methods.generateAccessToken = async function (){
+            return jwt.sign({ _id: this._id, email: this.email }, "2b$10$M6SFuVky14vOnkzeutoDZep" ,{ expiresIn: process.env.ACCESS_TOKEN_EXPIRY })
+        }
+
+
+        schema.methods.generateRefreshToken = function () {
+            return jwt.sign({
+                _id: this._id,
+              
+            }, "2b$10$M6SFuVky14vOnkzeutoDZep", { expiresIn: process.env.REFRESH_TOKEN_EXPIRY })
         }
 
         this.User = mongoose.model('User',schema);

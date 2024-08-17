@@ -29,4 +29,46 @@ export class UserController {
             return res.status(500).json({  status: false, message: error.message })
         }
     }
+
+
+
+    loginUser = async( req: Request, res: Response) => {
+        try {
+            let { email, password } = req.body;
+            let checkUser: any = await this._userModel.User.findOne({email});
+          
+            if (!checkUser || !(await checkUser.isPasswordCorrect(password))) {
+                return res.status(401).json({
+                    status: false,
+                    message: "Invalid email or password."
+                });
+            }
+         
+            const { accessToken, refreshToken } = await this.generateAccessAndRefreshTokens(checkUser._id);
+
+
+            return res.status(200).cookie('accessToken',accessToken,{httpOnly: true, secure: true}).cookie('refreshToken',refreshToken,{httpOnly: true, secure: true}).json({status: true, data: { accessToken, refreshToken  },
+            message: "Logged in successfully."})
+        } catch (error: any) {
+            return res.status(500).json({  status: false, message: error.message })
+        }
+    }
+
+    generateAccessAndRefreshTokens =  async (userId: string): Promise<{ accessToken: string, refreshToken: string }> => {
+        try {
+            const user: any = await this._userModel.User.findById(userId);
+            const accessToken = await  user.generateAccessToken();
+            const refreshToken = await  user.generateRefreshToken();
+    
+            user.refreshToken = refreshToken;
+            await user.save({ validateBeforeSave: false });
+
+            return {
+                accessToken,
+                refreshToken
+            }
+        } catch (error: any) {
+            throw new Error("An error occurred while generating tokens.");
+        }
+    }
 }
