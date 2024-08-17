@@ -1,4 +1,4 @@
-import { json, Request, Response } from "express";
+import { Request, Response } from "express";
 import { OrderManagementModel } from "../model/order_model";
 
 import { IOrderAdd } from "../interface/order_interface";

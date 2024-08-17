@@ -1,20 +1,20 @@
 import mongoose, { Schema, Model } from "mongoose";
 import { v4 as uuidv4 } from 'uuid';
 
-// interface IOrder {
-//     orderId: string;
-//     customerName: string;
-//     deliveryAddress: string;
-//     orderStatus: string;
-//     totalAmount: number;
-//     createdAt: Date;
-//     updatedAt: Date;
-// }
+interface IOrder {
+    orderId: string;
+    customerName: string;
+    deliveryAddress: string;
+    orderStatus: string;
+    totalAmount: number;
+    createdAt: Date;
+    updatedAt: Date;
+}
 
 export class OrderManagementModel {
-    public Order: Model<any>;
+    public Order: Model<IOrder>;
     constructor() {
-        const schema: Schema = new mongoose.Schema({
+        const schema: Schema<IOrder> = new mongoose.Schema({
 
             orderId: {
                 type: String,
