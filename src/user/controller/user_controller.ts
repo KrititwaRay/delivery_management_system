@@ -18,26 +18,15 @@ export class UserController {
             let checkUser = await this._userModel.User.findOne({ email: req.body.email });
 
             if (checkUser) {
-                return res.status(409).json({
-                    status: false,
-                    message: "A user with the provided credentials already exists. Please try another email or username."
-                })
+                return res.status(409).json({ status: false, message: "A user with the provided credentials already exists. Please try another email or username." })
             }
 
             let { _id } = await this._userModel.User.create(signUpObj);
 
-            return res.status(201).json({
-                status: true,
-                data: { _id },
-                message: "Signup successful."
-            })
+            return res.status(201).json({ status: true, data: { _id },  message: "Signup successful." })
 
         } catch (error: any) {
-
-            return res.status(500).json({
-                status: false,
-                message: error.message,
-            });
+            return res.status(500).json({  status: false, message: error.message })
         }
     }
 }

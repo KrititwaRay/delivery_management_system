@@ -5,12 +5,22 @@ const router = express.Router();
 import { UserController } from "../controller/user_controller";
 const userController = new UserController();
 
+import { UserValidation } from "../middleware/user_middleware";
+const userValidation = new UserValidation();
+
+import { CommonMiddleware } from "../../helper/common_middleware";
+const commonMiddleware = new CommonMiddleware();
+
+let middleware : any [] = [];
 
 
-
+middleware = [
+    userValidation.signupValidation(),
+    commonMiddleware.checkForErrors
+]
 router
 .route('/sign-up')
-.post(userController.signUp)
+.post(middleware,userController.signUp)
 
 
 export const user_route = router;
