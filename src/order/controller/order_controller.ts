@@ -90,7 +90,8 @@ export class OrderController {
 
     updateOrder = async(req: Request, res: Response) => {
         try {
-            let responseObj: any = {};
+            let responseObj: IresponseObj  = {};
+    
             let updateObject = {
                 customerName: req.body.customerName,
                 deliveryAddress: req.body.deliveryAddress,

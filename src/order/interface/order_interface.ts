@@ -7,6 +7,6 @@ export interface IOrderAdd {
 }
 
 export interface IresponseObj {
-    orderId: string
-    user_id: string
+    orderId?: string
+    user_id?: string
 }

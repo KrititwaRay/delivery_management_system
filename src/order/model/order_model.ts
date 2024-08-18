@@ -5,7 +5,6 @@ interface IOrder {
     orderId: string;
     customerName: string;
     deliveryAddress: string;
-    // orderStatus: 'pending' | 'dispatched' | 'delivered' | 'canceled';//string;
     orderStatus: string;
     totalAmount: number;
     createdAt: Date;
