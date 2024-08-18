@@ -1,14 +1,16 @@
-import mongoose, { Schema, Model } from "mongoose";
+import mongoose, { Schema, Model, ObjectId } from "mongoose";
 import { v4 as uuidv4 } from 'uuid';
 
 interface IOrder {
     orderId: string;
     customerName: string;
     deliveryAddress: string;
+    // orderStatus: 'pending' | 'dispatched' | 'delivered' | 'canceled';//string;
     orderStatus: string;
     totalAmount: number;
     createdAt: Date;
     updatedAt: Date;
+    user_id: ObjectId
 }
 
 export class OrderManagementModel {
@@ -23,6 +25,10 @@ export class OrderManagementModel {
                 default: function () {
                     return generateOrderId(6); // generate a 6 character alphanumeric orderId
                 }
+            },
+            user_id: {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: "User",
             },
             customerName: {
                 type: String,

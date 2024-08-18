@@ -5,11 +5,26 @@ const route = express.Router();
 import { OrderController } from "../controller/order_controller";
 const orderController = new OrderController();
 
+import { CommonMiddleware } from "../../helper/common_middleware";
+const commonMiddleware = new CommonMiddleware();
+
+let middleware: any [] = [];
 
 
-route.route('/create').post(orderController.createOrder);
+
+middleware = [
+    commonMiddleware.authenticationMiddleware,
+    commonMiddleware.isAuthorized('Admin','User'),
+    commonMiddleware.checkForErrors
+]
+route.route('/create').post(middleware,orderController.createOrder);
 
 
+middleware = [
+    commonMiddleware.authenticationMiddleware,
+    commonMiddleware.isAuthorized('Admin','User'),
+    commonMiddleware.checkForErrors
+]
 route.route('/list').get(orderController.orderList);
 
 

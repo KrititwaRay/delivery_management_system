@@ -32,14 +32,14 @@ export class CommonMiddleware {
         if(!token){
             return res.status(401).json({ status: false, message: "Unauthorized request." })
         }
-        const decodedToken: any = jwt.verify(token, process.env.JWT_SECRET!);
+        const decodedToken: any = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET!);
         const user: any = await this._userModel.User.findById(decodedToken?._id).select("-password -refreshToken")
         req.user = user;
         next();
     }
 
 
-     isAdminOrNot = (...roles: string[]) => {
+     isAuthorized = (...roles: string[]) => {
         return (req: any, res: Response, next: NextFunction) => {
             // Check if the user's role is included in the allowed roles
             if (!roles.includes(req.user?.role)) {

@@ -9,58 +9,62 @@ export class OrderController {
     createOrder = async (req: Request, res: Response) => {
 
         try {
-
             let orderAddObj: IOrderAdd = {
                 customerName: req.body.customerName,
                 deliveryAddress: req.body.deliveryAddress,
                 orderStatus: req.body.orderStatus,
-                totalAmount: req.body.totalAmount
+                totalAmount: req.body.totalAmount,
+                user_id: req.body.user_id
             }
             let create_res: any = await this._orderManagementModel.Order.create(orderAddObj);
 
             return res.status(201).json({
                 status: true,
-                order_id: create_res.orderId,
+                data: {
+                    order_id: create_res.orderId
+                },
                 message: "Order created successfully."
 
             })
         } catch (error: any) {
-            return res.status(404).json({
-                status: false,
-                message: error.message
-            })
+            return res.status(500).json({ status: false, message: error.message});
         }
     }
 
 
     orderList = async (req: Request, res: Response) => {
         try {
-            let list_res: any = await this._orderManagementModel.Order.find().select("orderId customerName deliveryAddress orderStatus totalAmount");
+            
+            let user_id: object = Object.keys(req.body).length != 0 ? {user_id: req.body.user_id} : {};
+            const orders = await this._orderManagementModel.Order.find(user_id).populate('user_id', 'f_name l_name email role').select( "orderId customerName deliveryAddress orderStatus totalAmount");
+            let count = await this._orderManagementModel.Order.countDocuments(user_id);
 
-            list_res = JSON.parse(JSON.stringify(list_res)) ;
-
-            let order_list = list_res.map((val: any) => {
-                delete val._id;
-                return ({
-                    order_id: val.orderId,
-                    customer_name: val.customerName,
-                    delivery_address: val.deliveryAddress,
-                    order_status: val.orderStatus,
-                    total_amount: val.totalAmount
-                })
+            let order_list = orders.map((val: any) => {
+                let orderObj = {
+                    _id : val.id,
+                    orderId: val.orderId,
+                    deliveryAddress: val.customerName,
+                    orderStatus: val.orderStatus,
+                    totalAmount: val.totalAmount,
+                    user: val.user_id
+                   
+                };
+                delete val.user_id
+                return orderObj
             })
-          
+
+           
             return res.status(200).json({
                 status: true,
-                order_list: order_list,
+                data: {
+                    order_list: order_list,
+                    count: count
+                },
                 message: "Order list fetched successfully"
 
             })
         } catch (error: any) {
-            return res.status(404).json({
-                status: false,
-                message: error.message
-            })
+            return res.status(404).json({ status: false, message: error.message })
         }
     }
 
@@ -69,7 +73,6 @@ export class OrderController {
         try {
             
             let order: any = await this._orderManagementModel.Order.findOne({ orderId: req.body.orderId })
-            console.log(order);
         } catch (error: any) {
             return res.status(404).json({
                 status: false,

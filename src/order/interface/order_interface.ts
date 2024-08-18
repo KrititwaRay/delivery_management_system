@@ -3,4 +3,5 @@ export interface IOrderAdd {
     deliveryAddress: string
     orderStatus: string
     totalAmount: number
+    user_id: string
 }
