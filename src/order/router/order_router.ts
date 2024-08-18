@@ -25,12 +25,21 @@ middleware = [
     commonMiddleware.isAuthorized('Admin','User'),
     commonMiddleware.checkForErrors
 ]
-route.route('/list').get(orderController.orderList);
+route.route('/list').post(middleware,orderController.orderList);
 
+middleware = [
+    commonMiddleware.authenticationMiddleware,
+    commonMiddleware.isAuthorized('Admin','User'),
+    commonMiddleware.checkForErrors
+]
+route.route('/delete').post(middleware,orderController.deleteOrder);
 
-route.route('/order').get(orderController.updateOrder);
-route.route('/order-update').get(orderController.getPerticularOrder);
-route.route('/order-delete').get(orderController.deleteOrder);
+middleware = [
+    commonMiddleware.authenticationMiddleware,
+    commonMiddleware.isAuthorized('Admin'),
+    commonMiddleware.checkForErrors
+]
+route.route('/update').post(middleware,orderController.updateOrder);
 
 
 

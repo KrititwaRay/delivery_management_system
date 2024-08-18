@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { OrderManagementModel } from "../model/order_model";
 
-import { IOrderAdd } from "../interface/order_interface";
+import { IOrderAdd, IresponseObj } from "../interface/order_interface";
 
 export class OrderController {
     private _orderManagementModel = new OrderManagementModel();
@@ -64,37 +64,54 @@ export class OrderController {
 
             })
         } catch (error: any) {
-            return res.status(404).json({ status: false, message: error.message })
+            return res.status(500).json({ status: false, message: error.message })
+        }
+    }
+
+    deleteOrder = async (req: any, res: Response) =>{
+        try {
+            let getOrderDetails: any = await this._orderManagementModel.Order.findOne({ orderId : req.body.orderId, user_id: req.body.user_id }).populate('user_id','_id')
+            if(!getOrderDetails){
+                return res.status(404).json({ status: false, message: "Please provide valid order details."})
+            }
+            if(req.user.role != 'Admin'){
+                if(!req.user._id.equals(getOrderDetails.user_id._id) ){
+                    return res.status(404).json({ status: false, message: "Please provide valid order id."})
+                }
+            }
+            let deleteOrder: any = await this._orderManagementModel.Order.deleteOne({orderId: req.body.orderId});
+            
+            return res.status(200).json({ status: true, data: {}, message: "Order deleted successfully." })
+        } catch (error: any) {
+            return res.status(500).json({ status: false, message: error.message })
         }
     }
 
 
-    getPerticularOrder = async( req: Request, res: Response) => {
+    updateOrder = async(req: Request, res: Response) => {
         try {
+            let responseObj: any = {};
+            let updateObject = {
+                customerName: req.body.customerName,
+                deliveryAddress: req.body.deliveryAddress,
+                orderStatus: req.body.orderStatus,
+                totalAmount: req.body.totalAmount
+            };
+            let getOrderDetails = await this._orderManagementModel.Order.findOne({orderId: req.body.orderId}).select('_id');
             
-            let order: any = await this._orderManagementModel.Order.findOne({ orderId: req.body.orderId })
-        } catch (error: any) {
-            return res.status(404).json({
-                status: false,
-                message: error.message
-            })
-        }
-    }
+            if(!getOrderDetails){
+                return res.status(404).json({ status: false, message: "Order not found." })
+            }
 
-    updateOrder = async (req: Request, res: Response) =>{
-        try {
-            
+            let updatedOrder: any = await this._orderManagementModel.Order.findByIdAndUpdate(getOrderDetails._id,{
+                $set: updateObject
+            },{ new: true })
+       
+            responseObj.orderId= updatedOrder.orderId;
+            responseObj.user_id= updatedOrder.user_id;
+            return res.status(200).json({ status: true, data: { order: responseObj },message: "Order updated successfully." })
         } catch (error: any) {
-            
-        }
-    }
-
-
-    deleteOrder = async(req: Request, res: Response) => {
-        try {
-            
-        } catch (error: any) {
-            
+            return res.status(500).json({ status: false, message: error.message })
         }
     }
 }
