@@ -23,7 +23,6 @@ router
 .post(middleware,userController.signUp)
 
 
-
 middleware = [
     userValidation.loginValidation(),
     commonMiddleware.checkForErrors
@@ -31,5 +30,13 @@ middleware = [
 router
 .route('/log-in')
 .post(middleware,userController.loginUser)
+
+
+middleware = [
+    commonMiddleware.authenticationMiddleware
+]
+router
+.route('/log-out')
+.post(middleware,userController.logoutUser)
 
 export const user_route = router;

@@ -71,4 +71,18 @@ export class UserController {
             throw new Error("An error occurred while generating tokens.");
         }
     }
+
+
+    logoutUser = async (req: any, res: Response) => {
+        try {
+            let user = await this._userModel.User.findByIdAndUpdate(req.user._id,{
+                $set: {  refreshToken: '' }
+            }, { new: true });
+
+            return res.status(200).cookie('accessToken',{httpOnly: true, secure: true}).cookie('refreshToken',{httpOnly: true, secure: true}).json({status: true, data: {},
+                message: "Logged out successfully."})
+        } catch (error: any) {
+            return res.status(500).json({  status: false, message: error.message })
+        }
+    }
 }

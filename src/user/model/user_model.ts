@@ -61,17 +61,19 @@ export class UserModel {
         }
         
         schema.methods.generateAccessToken = async function (){
-            return jwt.sign({ _id: this._id, email: this.email }, "2b$10$M6SFuVky14vOnkzeutoDZep" ,{ expiresIn: process.env.ACCESS_TOKEN_EXPIRY })
+            const secret: any = process.env.ACCESS_TOKEN_SECRET;
+            return jwt.sign({ _id: this._id, email: this.email }, secret ,{ expiresIn: process.env.ACCESS_TOKEN_EXPIRY })
         }
 
 
         schema.methods.generateRefreshToken = function () {
+            const secret: any = process.env.REFRESH_TOKEN_SECRET;
             return jwt.sign({
                 _id: this._id,
               
-            }, "2b$10$M6SFuVky14vOnkzeutoDZep", { expiresIn: process.env.REFRESH_TOKEN_EXPIRY })
+            }, secret, { expiresIn: process.env.REFRESH_TOKEN_EXPIRY })
         }
 
-        this.User = mongoose.model('User',schema);
+        this.User = mongoose.models.User || mongoose.model<IUser>('User', schema);
     }
 }
