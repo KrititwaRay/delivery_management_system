@@ -3,10 +3,12 @@ import { DriverModel } from "../model/driver_model";
 
 import { IcreateObject } from "../interface/driver_interface"; 
 import { UserModel } from "../../user/model/user_model";
+import { OrderManagementModel } from "../../order/model/order_model";
 
 export class DriverController {
     private _driverModel = new DriverModel();
     private _userModel = new UserModel();
+    private _orderManagementModel = new OrderManagementModel();
 
     addUpdate = async (req: Request, res: Response) => {
         try {
@@ -83,6 +85,34 @@ export class DriverController {
                 data: {},
                 message: `Driver deleted successfully.`
             })
+        } catch (error: any) {
+            return res.status(500).json({ status: false, message: error.message });
+        }
+    }
+
+    driverPayment = async( req: Request, res: Response) => {
+        try {
+            let { driverId, ordersCompleted, timeSpentOnline, distanceTraveled } =req.body;
+            let ratePerOrder = 50; 
+            let ratePerHourOnline = 20; 
+            let ratePerKm = 0.5; 
+
+            let findDriver: any =  await this._driverModel.Driver.findOne({ driverId });
+            if (!findDriver) {
+                return res.status(404).json({ status: false, message: 'Driver not found.' });
+            }
+            let totalPayment = (ordersCompleted * ratePerOrder) +
+            (timeSpentOnline * ratePerHourOnline) +
+            (distanceTraveled * ratePerKm);
+
+            return res.status(200).json({
+                status: true,
+                data: {
+                    driverId,
+                    totalPayment
+                },
+                message: "Driver's total payment fetched successdully"
+            });
         } catch (error: any) {
             return res.status(500).json({ status: false, message: error.message });
         }

@@ -31,9 +31,17 @@ route.route('/get-driver').post(middleware,driverController.getDriver);
 middleware = [
     commonMiddleware.authenticationMiddleware,
     commonMiddleware.isAuthorized('Admin'),
-    driverValidation.gdeleteDriverValidation(),
+    driverValidation.deleteDriverValidation(),
     commonMiddleware.checkForErrors
 ]
 route.route('/delete').post(middleware,driverController.deleteDriver);
+
+middleware = [
+    commonMiddleware.authenticationMiddleware,
+    commonMiddleware.isAuthorized('Admin'),
+    driverValidation.driverPaymentValidation(),
+    commonMiddleware.checkForErrors
+]
+route.route('/payment').post(middleware,driverController.driverPayment);
 
 export const driver_route = route;

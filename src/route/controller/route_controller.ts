@@ -51,7 +51,7 @@ export class RouteController {
             if (Object.keys(routeId).length != 0) {
                 let checkRouteId: number = await this._routeModel.Route.countDocuments({ routeId: req.body.routeId });
                 if (checkRouteId == 0) {
-                    return res.status(500).json({ status: false, message: "Please provide valid route id...." });
+                    return res.status(500).json({ status: false, message: "Please provide valid route id." });
                 }
             }
             let route: any = await this._routeModel.Route.find(routeId).populate('orderId','orderId customerName deliveryAddress totalAmount').select('-createdAt -updatedAt -__v')

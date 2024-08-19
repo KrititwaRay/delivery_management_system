@@ -1,8 +1,6 @@
 import { Request, Response } from "express";
 import { OrderManagementModel } from "../model/order_model";
-
 import { IOrderAdd, IresponseObj } from "../interface/order_interface";
-
 export class OrderController {
     private _orderManagementModel = new OrderManagementModel();
 
@@ -35,7 +33,13 @@ export class OrderController {
     orderList = async (req: Request, res: Response) => {
         try {
             
-            let user_id: object = Object.keys(req.body).length != 0 ? {user_id: req.body.user_id} : {};
+            let user_id = req.body.user_id != '' ? {user_id: req.body.user_id} : {};
+            if(user_id){
+                let checkUserId: any = await this._orderManagementModel.Order.find(user_id);
+                if(checkUserId.length == 0){
+                    return res.status(500).json({ status: false, message: 'Order no found.Please provide valid user id.' })
+                }
+            }
             const orders = await this._orderManagementModel.Order.find(user_id).populate('user_id', 'f_name l_name email role').select( "orderId customerName deliveryAddress orderStatus totalAmount");
             let count = await this._orderManagementModel.Order.countDocuments(user_id);
 

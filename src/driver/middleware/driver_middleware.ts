@@ -13,9 +13,18 @@ export class DriverValidation{
         ]
     }
 
-    gdeleteDriverValidation(){
+    deleteDriverValidation(){
         return [
             check('driverId').trim().not().isEmpty().withMessage('Pease provide driver id.'),
+        ]
+    }
+
+    driverPaymentValidation(){
+        return [
+            check('driverId').trim().not().isEmpty().withMessage('Pease provide driver id.'),
+            check('ordersCompleted').trim().not().isEmpty().withMessage('please provide total order completed.'),
+            check('timeSpentOnline').trim().not().isEmpty().withMessage('please provide total time spent.'),
+            check('distanceTraveled').trim().not().isEmpty().withMessage('please provide total distance traveled.')
         ]
     }
 }

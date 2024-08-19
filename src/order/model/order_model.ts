@@ -22,7 +22,7 @@ export class OrderManagementModel {
                 required: true,
                 unique: true,
                 default: function () {
-                    return generateOrderId(6); // generate a 6 character alphanumeric orderId
+                    return generateOrderId(6);
                 }
             },
             user_id: {
