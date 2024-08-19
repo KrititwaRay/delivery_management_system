@@ -56,14 +56,9 @@ export class OrderManagementModel {
             }
             next();
         });
-        // Middleware to generate unique orderId before saving
-        // schema.pre('save', function (next) {
-        //     if (!this.orderId) {
-        //         this.orderId = uuidv4().slice(0, 6); // Generates a 6-character alphanumeric code
-        //     }
-        //     next();
-        // });
-        this.Order = mongoose.model('Order', schema);
+        
+        this.Order = mongoose.models.Order || mongoose.model<IOrder>('Order', schema);
+
     }
 }
 
